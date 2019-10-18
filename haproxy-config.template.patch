@@ -1,0 +1,14 @@
+diff --git a/haproxy-config.template b/haproxy-config.template.new
+index 0f8831d..f1997a9 100644
+--- a/haproxy-config.template
++++ b/haproxy-config.template.new
+@@ -424,7 +424,8 @@ backend {{genBackendNamePrefix $cfg.TLSTermination}}:{{$cfgIdx}}
+     {{- end }}
+ 
+   timeout check 5000ms
+-  http-request set-header X-Forwarded-Host %[req.hdr(host)]
++  acl x_forwarded_host req.hdr(x-forwarded-host) -m found
++  http-request set-header X-Forwarded-Host %[req.hdr(host)] unless x_forwarded_host
+   http-request set-header X-Forwarded-Port %[dst_port]
+   http-request set-header X-Forwarded-Proto http if !{ ssl_fc }
+   http-request set-header X-Forwarded-Proto https if { ssl_fc }
